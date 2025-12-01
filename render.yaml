@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: youtube-clone-backend
+    env: node
+    region: oregon
+    plan: free
+    rootDir: Backend
+    buildCommand: npm install --production=false && npm run build && npm prune --production
+    startCommand: npm run start
+    envVars:
+      - key: NODE_VERSION
+        value: 22.16.0
+      - key: NODE_ENV
+        value: production
