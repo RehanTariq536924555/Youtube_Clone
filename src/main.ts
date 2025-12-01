@@ -12,7 +12,7 @@ async function bootstrap() {
     console.log('Application created successfully');
 
     const configService = app.get(ConfigService);
-    const port = configService.get<number>('PORT') || 4000;
+    const port = process.env.PORT || configService.get<number>('PORT') || 4000;
     const frontendUrl = configService.get<string>('FRONTEND_URL') || 'http://localhost:3000';
 
     console.log('Configuring CORS...');
@@ -39,7 +39,7 @@ async function bootstrap() {
     app.useGlobalFilters(new StreamExceptionFilter());
 
     console.log(`Starting server on port ${port}...`);
-    await app.listen(port);
+    await app.listen(port, '0.0.0.0');
     console.log(`🚀 Application is running on: http://localhost:${port}`);
   } catch (error) {
     console.error('❌ Error starting application:', error);
