@@ -6,7 +6,8 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "build": "npm rebuild bcrypt --build-from-source && tsc -p tsconfig.build.json",
+    "postinstall": "npm rebuild bcrypt --build-from-source",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "node dist/main",
     "start:dev": "nest start --watch",
