@@ -1,0 +1,10 @@
+[33m1039eff8[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m Add directory structure placeholders and remove large files
+[33m41fea260[m Update: Complete YouTube Clone project with deployment configs
+[33m7140148d[m[33m ([m[1;31morigin/main[m[33m)[m Fix bcrypt build issue for Render deployment
+[33ma8a12653[m Fix bcrypt native module error on Render deployment
+[33m546b7416[m Fix bcrypt deployment error on Render
+[33m6fd18252[m Fix Render deployment: use node directly instead of nest CLI
+[33m261678c8[m Remove render.yaml - configure in dashboard
+[33mc2cc3ef6[m Fix build: use tsc directly and install all deps
+[33m67494a1b[m Fix nest build command with npx
+[33mcec91e89[m Fix Render deployment: add types, update port binding, add render.yaml
