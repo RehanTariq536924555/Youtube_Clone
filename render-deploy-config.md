@@ -6,7 +6,7 @@ Go to your Render Web Service → Environment tab and add these variables:
 
 ### Database Configuration
 ```
-DATABASE_URL=postgresql://postgres:db_youtube_clone_pw@db.iyfxkudotvedmqhleioc.supabase.co:5432/postgres
+DATABASE_URL=postgresql://youtube_clone_db_n4c1_user:qzYvH6l4fqiCOg7OtluPMU85VwkXmJU7@dpg-d4mpu6ili9vc73f215mg-a/youtube_clone_db_n4c1
 ```
 
 ### Application Settings
