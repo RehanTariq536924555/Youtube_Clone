@@ -1,4 +1,16 @@
-# Deployment Guide for Render
+# Deployment Guide
+
+## 🎯 Recommended Setup: Supabase + Render
+
+### ✅ **READY TO DEPLOY** 
+**Database**: Supabase PostgreSQL (Configured ✅)  
+**Backend**: Render Web Service  
+
+**Quick Start**: Run `deploy-render-supabase.bat` or see `SUPABASE_RENDER_DEPLOYMENT.md`
+
+---
+
+## Alternative: Render PostgreSQL Only
 
 ## Prerequisites
 1. GitHub repository with your code

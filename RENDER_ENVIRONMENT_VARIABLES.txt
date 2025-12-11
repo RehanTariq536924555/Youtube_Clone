@@ -2,7 +2,7 @@ COPY AND PASTE THESE ENVIRONMENT VARIABLES IN RENDER:
 
 Go to your Render Web Service → Environment tab → Add each variable:
 
-DATABASE_URL=postgresql://youtube_clone_db_n4c1_user:qzYvH6l4fqiCOg7OtluPMU85VwkXmJU7@dpg-d4mpu6ili9vc73f215mg-a/youtube_clone_db_n4c1
+DATABASE_URL=postgresql://postgres.iyfxkudotvedmqhleioc:db_youtube_clone_pw@aws-1-ap-northeast-1.pooler.supabase.com:5432/postgres
 
 NODE_ENV=production
 
