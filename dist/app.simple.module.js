@@ -8,13 +8,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppSimpleModule = void 0;
 const common_1 = require("@nestjs/common");
-const typeorm_1 = require("@nestjs/typeorm");
 const config_1 = require("@nestjs/config");
 const configuration_1 = require("./config/configuration");
-const auth_module_1 = require("./auth/auth.module");
-const users_module_1 = require("./users/users.module");
 const email_service_1 = require("./email/email.service");
-const videos_module_1 = require("./videos/videos.module");
 let AppSimpleModule = class AppSimpleModule {
 };
 exports.AppSimpleModule = AppSimpleModule;
@@ -26,26 +22,8 @@ exports.AppSimpleModule = AppSimpleModule = __decorate([
                 load: [configuration_1.default],
                 envFilePath: '.env',
             }),
-            typeorm_1.TypeOrmModule.forRootAsync({
-                imports: [config_1.ConfigModule],
-                inject: [config_1.ConfigService],
-                useFactory: async (configService) => ({
-                    type: 'postgres',
-                    host: configService.get('database.host'),
-                    port: configService.get('database.port'),
-                    username: configService.get('database.username'),
-                    password: configService.get('database.password'),
-                    database: configService.get('database.database'),
-                    entities: [__dirname + '/**/*.entity{.ts,.js}'],
-                    autoLoadEntities: true,
-                    synchronize: true,
-                    logging: true,
-                }),
-            }),
-            auth_module_1.AuthModule,
-            users_module_1.UsersModule,
-            videos_module_1.VideosModule,
         ],
+        controllers: [],
         providers: [email_service_1.EmailService],
     })
 ], AppSimpleModule);

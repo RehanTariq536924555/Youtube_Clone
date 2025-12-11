@@ -8,9 +8,9 @@ import { AuthController } from './auth.controller';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { GoogleStrategy } from './strategies/google.strategy';
-import { UsersService } from 'src/users/users.service';
-import { UserRepository } from 'src/users/users.repository';
-import { EmailService } from 'src/email/email.service';
+import { UsersService } from '../users/users.service';
+import { UserRepository } from '../users/users.repository';
+import { EmailService } from '../email/email.service';
 
 
 @Module({

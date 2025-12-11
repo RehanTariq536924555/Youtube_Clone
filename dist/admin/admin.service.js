@@ -21,7 +21,7 @@ const video_entity_1 = require("../videos/entities/video.entity");
 const comment_entity_1 = require("../comments/entities/comment.entity");
 const view_entity_1 = require("../views/entities/view.entity");
 const channel_entity_1 = require("../channels/entities/channel.entity");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 let AdminService = class AdminService {
     constructor(userRepository, videoRepository, commentRepository, viewRepository, channelRepository) {
         this.userRepository = userRepository;

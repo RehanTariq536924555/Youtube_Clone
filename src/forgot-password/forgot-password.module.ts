@@ -4,7 +4,7 @@ import { ForgotPasswordController } from './forgot-password.controller';
 import { UsersModule } from '../users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { EmailService } from 'src/email/email.service';
+import { EmailService } from '../email/email.service';
 
 
 @Module({

@@ -1,5 +1,6 @@
+import { Strategy } from 'passport-local';
 import { AuthService } from '../auth.service';
-declare const LocalStrategy_base: new (...args: any[]) => InstanceType<any>;
+declare const LocalStrategy_base: new (...args: any[]) => InstanceType<typeof Strategy>;
 export declare class LocalStrategy extends LocalStrategy_base {
     private readonly authService;
     constructor(authService: AuthService);
