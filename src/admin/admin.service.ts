@@ -6,7 +6,7 @@ import { Video } from '../videos/entities/video.entity';
 import { Comment } from '../comments/entities/comment.entity';
 import { View } from '../views/entities/view.entity';
 import { Channel } from '../channels/entities/channel.entity';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class AdminService {
