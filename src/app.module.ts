@@ -33,6 +33,9 @@ import { PlaylistsModule } from './playlists/playlists.module';
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => {
         console.log('🔧 Database Configuration:');
+        console.log('- NODE_ENV:', process.env.NODE_ENV);
+        console.log('- DATABASE_URL exists:', !!process.env.DATABASE_URL);
+        console.log('- DATABASE_URL preview:', process.env.DATABASE_URL ? process.env.DATABASE_URL.substring(0, 30) + '...' : 'NOT SET');
         
         // Check if DATABASE_URL is provided (common on Render)
         const databaseUrl = process.env.DATABASE_URL;
