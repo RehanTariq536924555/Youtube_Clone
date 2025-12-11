@@ -33,6 +33,27 @@ import { PlaylistsModule } from './playlists/playlists.module';
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => {
         console.log('🔧 Database Configuration:');
+        
+        // Check if DATABASE_URL is provided (common on Render)
+        const databaseUrl = process.env.DATABASE_URL;
+        if (databaseUrl) {
+          console.log('- Using DATABASE_URL connection');
+          return {
+            type: 'postgres',
+            url: databaseUrl,
+            entities: [__dirname + '/**/*.entity{.ts,.js}'],
+            autoLoadEntities: true,
+            synchronize: true,
+            logging: false,
+            retryAttempts: 3,
+            retryDelay: 3000,
+            dropSchema: false,
+            migrationsRun: false,
+            ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+          };
+        }
+        
+        // Fallback to individual environment variables
         console.log('- Host:', configService.get('database.host'));
         console.log('- Port:', configService.get('database.port'));
         console.log('- Database:', configService.get('database.database'));
@@ -51,8 +72,9 @@ import { PlaylistsModule } from './playlists/playlists.module';
           logging: false,
           retryAttempts: 3,
           retryDelay: 3000,
-          dropSchema: false, // Don't drop existing schema
-          migrationsRun: false, // Don't run migrations automatically
+          dropSchema: false,
+          migrationsRun: false,
+          ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
         };
       },
     }),
