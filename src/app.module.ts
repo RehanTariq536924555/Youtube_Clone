@@ -15,6 +15,10 @@ import { SubscriptionsModule } from './subscriptions/subscriptions.module';
 import { ViewsModule } from './views/views.module';
 import { WatchLaterModule } from './watch-later/watch-later.module';
 import { DownloadsModule } from './downloads/downloads.module';
+import { AdminModule } from './admin/admin.module';
+import { SettingsModule } from './settings/settings.module';
+import { ChannelsModule } from './channels/channels.module';
+import { PlaylistsModule } from './playlists/playlists.module';
 
 
 @Module({
@@ -63,6 +67,10 @@ import { DownloadsModule } from './downloads/downloads.module';
     ViewsModule,
     WatchLaterModule,
     DownloadsModule,
+    AdminModule,
+    SettingsModule,
+    ChannelsModule,
+    PlaylistsModule,
   ],
   providers: [EmailService],
 })

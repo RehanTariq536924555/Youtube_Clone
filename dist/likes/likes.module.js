@@ -14,6 +14,7 @@ const likes_controller_1 = require("./likes.controller");
 const like_entity_1 = require("./entities/like.entity");
 const videos_module_1 = require("../videos/videos.module");
 const comments_module_1 = require("../comments/comments.module");
+const playlists_module_1 = require("../playlists/playlists.module");
 let LikesModule = class LikesModule {
 };
 exports.LikesModule = LikesModule;
@@ -23,6 +24,7 @@ exports.LikesModule = LikesModule = __decorate([
             typeorm_1.TypeOrmModule.forFeature([like_entity_1.Like]),
             (0, common_1.forwardRef)(() => videos_module_1.VideosModule),
             (0, common_1.forwardRef)(() => comments_module_1.CommentsModule),
+            (0, common_1.forwardRef)(() => playlists_module_1.PlaylistsModule),
         ],
         controllers: [likes_controller_1.LikesController],
         providers: [likes_service_1.LikesService],

@@ -11,6 +11,8 @@ export declare class User {
     bio: string;
     subscribersCount: number;
     videosCount: number;
+    role: string;
+    isBanned: boolean;
     videos: any[];
     comments: any[];
     likes: any[];

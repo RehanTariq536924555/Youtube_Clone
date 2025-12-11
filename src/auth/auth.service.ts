@@ -25,7 +25,8 @@ export class AuthService {
       sub: user.id,
       name: user.name,
       picture: user.picture,
-      googleId: user.googleId
+      googleId: user.googleId,
+      role: user.role || 'user'
     };
     
     return {
@@ -37,6 +38,7 @@ export class AuthService {
         picture: user.picture,
         googleId: user.googleId,
         isEmailVerified: user.isEmailVerified,
+        role: user.role || 'user',
         createdAt: user.createdAt
       }
     };

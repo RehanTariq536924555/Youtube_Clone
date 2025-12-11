@@ -1,9 +1,10 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Video, VideoVisibility } from './entities/video.entity';
 import { CreateVideoDto } from './dto/create-video.dto';
 import { UpdateVideoDto } from './dto/update-video.dto';
+import { Channel } from '../channels/entities/channel.entity';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -12,6 +13,8 @@ export class VideosService {
   constructor(
     @InjectRepository(Video)
     private videosRepository: Repository<Video>,
+    @InjectRepository(Channel)
+    private channelRepository: Repository<Channel>,
   ) {}
 
   async create(
@@ -20,6 +23,34 @@ export class VideosService {
     userId: string,
     thumbnailFile?: Express.Multer.File,
   ): Promise<Video> {
+    // Check if channel is provided and validate it
+    if (createVideoDto.channelId) {
+      const channel = await this.channelRepository.findOne({
+        where: { id: createVideoDto.channelId },
+      });
+
+      if (!channel) {
+        throw new NotFoundException('Channel not found');
+      }
+
+      // Check if user owns the channel
+      if (channel.userId !== userId) {
+        throw new ForbiddenException('You can only upload videos to your own channels');
+      }
+
+      // Check if channel is suspended
+      if (channel.isSuspended) {
+        throw new ForbiddenException(
+          `Cannot upload videos to suspended channel. Reason: ${channel.suspensionReason || 'Channel has been suspended by admin'}`
+        );
+      }
+
+      // Check if channel is active
+      if (!channel.isActive) {
+        throw new BadRequestException('Cannot upload videos to inactive channel');
+      }
+    }
+
     const video = this.videosRepository.create({
       ...createVideoDto,
       filename: file.filename,
@@ -27,6 +58,7 @@ export class VideosService {
       mimeType: file.mimetype,
       size: file.size,
       userId,
+      channelId: createVideoDto.channelId || null,
       visibility: createVideoDto.visibility || VideoVisibility.PUBLIC,
       thumbnail: thumbnailFile ? thumbnailFile.filename : null,
       tags: createVideoDto.tags && createVideoDto.tags.length > 0 ? createVideoDto.tags : null,
@@ -41,9 +73,14 @@ export class VideosService {
       .createQueryBuilder('video')
       .leftJoinAndSelect('video.user', 'user');
 
+    // Always filter out suspended videos for regular users
+    queryBuilder.andWhere('video.isSuspended = :isSuspended', { isSuspended: false });
+
     if (userId) {
       // If userId is provided, show all videos for that user
       queryBuilder.where('video.userId = :userId', { userId });
+      // Still filter suspended videos even for owner
+      queryBuilder.andWhere('video.isSuspended = :isSuspended', { isSuspended: false });
     } else {
       // If no userId, only show public videos
       queryBuilder.where('video.visibility = :visibility', {
@@ -63,6 +100,11 @@ export class VideosService {
     });
 
     if (!video) {
+      throw new NotFoundException('Video not found');
+    }
+
+    // Check if video is suspended (hide from regular users)
+    if (video.isSuspended && video.userId !== userId) {
       throw new NotFoundException('Video not found');
     }
 
@@ -114,6 +156,7 @@ export class VideosService {
   }
 
   async findUserVideos(userId: string): Promise<Video[]> {
+    // Show user their own videos including suspended ones (so they know)
     return this.videosRepository.find({
       where: { userId },
       relations: ['user'],
@@ -180,7 +223,8 @@ export class VideosService {
     return this.videosRepository.find({
       where: { 
         category,
-        visibility: VideoVisibility.PUBLIC 
+        visibility: VideoVisibility.PUBLIC,
+        isSuspended: false
       },
       relations: ['user'],
       order: { createdAt: 'DESC' },
@@ -196,6 +240,7 @@ export class VideosService {
       .createQueryBuilder('video')
       .leftJoinAndSelect('video.user', 'user')
       .where('video.visibility = :visibility', { visibility: VideoVisibility.PUBLIC })
+      .andWhere('video.isSuspended = :isSuspended', { isSuspended: false })
       .andWhere('video.createdAt >= :date', { date: sevenDaysAgo })
       .orderBy('video.viewsCount', 'DESC')
       .addOrderBy('video.likesCount', 'DESC')
@@ -208,7 +253,8 @@ export class VideosService {
     const queryBuilder = this.videosRepository
       .createQueryBuilder('video')
       .leftJoinAndSelect('video.user', 'user')
-      .where('video.isShort = :isShort', { isShort: true });
+      .where('video.isShort = :isShort', { isShort: true })
+      .andWhere('video.isSuspended = :isSuspended', { isSuspended: false });
 
     if (userId) {
       // If userId is provided, show all shorts for that user
@@ -235,6 +281,7 @@ export class VideosService {
       .leftJoinAndSelect('video.user', 'user')
       .where('video.isShort = :isShort', { isShort: true })
       .andWhere('video.visibility = :visibility', { visibility: VideoVisibility.PUBLIC })
+      .andWhere('video.isSuspended = :isSuspended', { isSuspended: false })
       .andWhere('video.createdAt >= :date', { date: threeDaysAgo })
       .orderBy('video.viewsCount', 'DESC')
       .addOrderBy('video.likesCount', 'DESC')

@@ -16,6 +16,7 @@ export declare class DownloadsService {
         thumbnail: string;
         visibility: import("../videos/entities/video.entity").VideoVisibility;
         userId: string;
+        channelId: string;
         viewsCount: number;
         likesCount: number;
         dislikesCount: number;
@@ -24,7 +25,11 @@ export declare class DownloadsService {
         category: string;
         duration: number;
         isShort: boolean;
+        isFeatured: boolean;
+        isSuspended: boolean;
+        suspensionReason: string;
         user: import("../users/entities/user.entity").User;
+        channel: any;
         comments: import("../comments/entities/comment.entity").Comment[];
         views: import("../views/entities/view.entity").View[];
         createdAt: Date;

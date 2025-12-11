@@ -5,12 +5,14 @@ import { LikesController } from './likes.controller';
 import { Like } from './entities/like.entity';
 import { VideosModule } from '../videos/videos.module';
 import { CommentsModule } from '../comments/comments.module';
+import { PlaylistsModule } from '../playlists/playlists.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Like]),
     forwardRef(() => VideosModule),
     forwardRef(() => CommentsModule),
+    forwardRef(() => PlaylistsModule),
   ],
   controllers: [LikesController],
   providers: [LikesService],

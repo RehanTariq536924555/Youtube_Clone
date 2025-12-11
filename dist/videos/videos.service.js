@@ -17,13 +17,32 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const video_entity_1 = require("./entities/video.entity");
+const channel_entity_1 = require("../channels/entities/channel.entity");
 const fs = require("fs");
 const path = require("path");
 let VideosService = class VideosService {
-    constructor(videosRepository) {
+    constructor(videosRepository, channelRepository) {
         this.videosRepository = videosRepository;
+        this.channelRepository = channelRepository;
     }
     async create(createVideoDto, file, userId, thumbnailFile) {
+        if (createVideoDto.channelId) {
+            const channel = await this.channelRepository.findOne({
+                where: { id: createVideoDto.channelId },
+            });
+            if (!channel) {
+                throw new common_1.NotFoundException('Channel not found');
+            }
+            if (channel.userId !== userId) {
+                throw new common_1.ForbiddenException('You can only upload videos to your own channels');
+            }
+            if (channel.isSuspended) {
+                throw new common_1.ForbiddenException(`Cannot upload videos to suspended channel. Reason: ${channel.suspensionReason || 'Channel has been suspended by admin'}`);
+            }
+            if (!channel.isActive) {
+                throw new common_1.BadRequestException('Cannot upload videos to inactive channel');
+            }
+        }
         const video = this.videosRepository.create({
             ...createVideoDto,
             filename: file.filename,
@@ -31,6 +50,7 @@ let VideosService = class VideosService {
             mimeType: file.mimetype,
             size: file.size,
             userId,
+            channelId: createVideoDto.channelId || null,
             visibility: createVideoDto.visibility || video_entity_1.VideoVisibility.PUBLIC,
             thumbnail: thumbnailFile ? thumbnailFile.filename : null,
             tags: createVideoDto.tags && createVideoDto.tags.length > 0 ? createVideoDto.tags : null,
@@ -42,8 +62,10 @@ let VideosService = class VideosService {
         const queryBuilder = this.videosRepository
             .createQueryBuilder('video')
             .leftJoinAndSelect('video.user', 'user');
+        queryBuilder.andWhere('video.isSuspended = :isSuspended', { isSuspended: false });
         if (userId) {
             queryBuilder.where('video.userId = :userId', { userId });
+            queryBuilder.andWhere('video.isSuspended = :isSuspended', { isSuspended: false });
         }
         else {
             queryBuilder.where('video.visibility = :visibility', {
@@ -60,6 +82,9 @@ let VideosService = class VideosService {
             relations: ['user'],
         });
         if (!video) {
+            throw new common_1.NotFoundException('Video not found');
+        }
+        if (video.isSuspended && video.userId !== userId) {
             throw new common_1.NotFoundException('Video not found');
         }
         if (video.visibility === video_entity_1.VideoVisibility.PRIVATE && video.userId !== userId) {
@@ -147,7 +172,8 @@ let VideosService = class VideosService {
         return this.videosRepository.find({
             where: {
                 category,
-                visibility: video_entity_1.VideoVisibility.PUBLIC
+                visibility: video_entity_1.VideoVisibility.PUBLIC,
+                isSuspended: false
             },
             relations: ['user'],
             order: { createdAt: 'DESC' },
@@ -160,6 +186,7 @@ let VideosService = class VideosService {
             .createQueryBuilder('video')
             .leftJoinAndSelect('video.user', 'user')
             .where('video.visibility = :visibility', { visibility: video_entity_1.VideoVisibility.PUBLIC })
+            .andWhere('video.isSuspended = :isSuspended', { isSuspended: false })
             .andWhere('video.createdAt >= :date', { date: sevenDaysAgo })
             .orderBy('video.viewsCount', 'DESC')
             .addOrderBy('video.likesCount', 'DESC')
@@ -170,7 +197,8 @@ let VideosService = class VideosService {
         const queryBuilder = this.videosRepository
             .createQueryBuilder('video')
             .leftJoinAndSelect('video.user', 'user')
-            .where('video.isShort = :isShort', { isShort: true });
+            .where('video.isShort = :isShort', { isShort: true })
+            .andWhere('video.isSuspended = :isSuspended', { isSuspended: false });
         if (userId) {
             queryBuilder.andWhere('video.userId = :userId', { userId });
         }
@@ -191,6 +219,7 @@ let VideosService = class VideosService {
             .leftJoinAndSelect('video.user', 'user')
             .where('video.isShort = :isShort', { isShort: true })
             .andWhere('video.visibility = :visibility', { visibility: video_entity_1.VideoVisibility.PUBLIC })
+            .andWhere('video.isSuspended = :isSuspended', { isSuspended: false })
             .andWhere('video.createdAt >= :date', { date: threeDaysAgo })
             .orderBy('video.viewsCount', 'DESC')
             .addOrderBy('video.likesCount', 'DESC')
@@ -220,6 +249,8 @@ exports.VideosService = VideosService;
 exports.VideosService = VideosService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(video_entity_1.Video)),
-    __metadata("design:paramtypes", [typeorm_2.Repository])
+    __param(1, (0, typeorm_1.InjectRepository)(channel_entity_1.Channel)),
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository])
 ], VideosService);
 //# sourceMappingURL=videos.service.js.map

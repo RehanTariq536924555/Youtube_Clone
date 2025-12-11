@@ -68,6 +68,10 @@ __decorate([
     __metadata("design:type", String)
 ], Video.prototype, "userId", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ type: 'uuid', nullable: true }),
+    __metadata("design:type", String)
+], Video.prototype, "channelId", void 0);
+__decorate([
     (0, typeorm_1.Column)({ type: 'int', default: 0 }),
     __metadata("design:type", Number)
 ], Video.prototype, "viewsCount", void 0);
@@ -100,10 +104,27 @@ __decorate([
     __metadata("design:type", Boolean)
 ], Video.prototype, "isShort", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ type: 'boolean', default: false }),
+    __metadata("design:type", Boolean)
+], Video.prototype, "isFeatured", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'boolean', default: false }),
+    __metadata("design:type", Boolean)
+], Video.prototype, "isSuspended", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'text', nullable: true }),
+    __metadata("design:type", String)
+], Video.prototype, "suspensionReason", void 0);
+__decorate([
     (0, typeorm_1.ManyToOne)(() => user_entity_1.User, user => user.videos),
     (0, typeorm_1.JoinColumn)({ name: 'userId' }),
     __metadata("design:type", user_entity_1.User)
 ], Video.prototype, "user", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)('Channel', 'videos', { nullable: true }),
+    (0, typeorm_1.JoinColumn)({ name: 'channelId' }),
+    __metadata("design:type", Object)
+], Video.prototype, "channel", void 0);
 __decorate([
     (0, typeorm_1.OneToMany)(() => comment_entity_1.Comment, comment => comment.video),
     __metadata("design:type", Array)

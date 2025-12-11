@@ -45,6 +45,12 @@ export class User {
   @Column({ type: 'int', default: 0 })
   videosCount: number;
 
+  @Column({ default: 'user' })
+  role: string;
+
+  @Column({ default: false })
+  isBanned: boolean;
+
   @OneToMany('Video', 'user')
   videos: any[];
 

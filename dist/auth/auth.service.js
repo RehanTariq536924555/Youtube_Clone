@@ -30,7 +30,8 @@ let AuthService = class AuthService {
             sub: user.id,
             name: user.name,
             picture: user.picture,
-            googleId: user.googleId
+            googleId: user.googleId,
+            role: user.role || 'user'
         };
         return {
             access_token: this.jwtService.sign(payload, { expiresIn: '30d' }),
@@ -41,6 +42,7 @@ let AuthService = class AuthService {
                 picture: user.picture,
                 googleId: user.googleId,
                 isEmailVerified: user.isEmailVerified,
+                role: user.role || 'user',
                 createdAt: user.createdAt
             }
         };

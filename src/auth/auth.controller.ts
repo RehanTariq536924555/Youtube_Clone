@@ -121,12 +121,24 @@ async manualVerifyEmail(@Body() body: { email: string }) {
 @Get('me')
 async getCurrentUser(@Request() req) {
   try {
-    const user = await this.usersService.findById(req.user.sub);
+    // JWT strategy returns 'id', not 'sub'
+    const userId = req.user.id || req.user.sub;
+    console.log('GET /auth/me - User ID from token:', userId);
+    console.log('GET /auth/me - Full req.user:', req.user);
+    
+    const user = await this.usersService.findById(userId);
     if (!user) {
+      console.error('GET /auth/me - User not found:', userId);
       return { error: 'User not found' };
     }
     
-    return {
+    console.log('GET /auth/me - User found:', {
+      id: user.id,
+      email: user.email,
+      role: user.role
+    });
+    
+    const responseData = {
       user: {
         id: user.id,
         name: user.name,
@@ -134,10 +146,16 @@ async getCurrentUser(@Request() req) {
         picture: user.picture,
         googleId: user.googleId,
         isEmailVerified: user.isEmailVerified,
+        role: user.role || 'user',
         createdAt: user.createdAt
       }
     };
+    
+    console.log('GET /auth/me - Sending response:', JSON.stringify(responseData));
+    
+    return responseData;
   } catch (error) {
+    console.error('GET /auth/me - Error:', error.message);
     return { error: 'Failed to get user info', details: error.message };
   }
 }
@@ -166,7 +184,8 @@ async googleAuthCallback(@Request() req, @Res() res: Response) {
       email: req.user.email,
       picture: req.user.picture,
       googleId: req.user.googleId,
-      isEmailVerified: req.user.isEmailVerified
+      isEmailVerified: req.user.isEmailVerified,
+      role: req.user.role || 'user'
     };
     
     res.redirect(`${frontendUrl}/#/auth/callback?token=${loginResult.access_token}&user=${encodeURIComponent(JSON.stringify(userData))}`);
@@ -234,7 +253,8 @@ async googleVerifyCredential(@Body() body: { credential: string }) {
         email: user.email,
         picture: user.picture,
         googleId: user.googleId,
-        isEmailVerified: user.isEmailVerified
+        isEmailVerified: user.isEmailVerified,
+        role: user.role || 'user'
       },
       access_token: loginResult.access_token
     };
@@ -277,7 +297,8 @@ async googleMockAuth(@Body() body: { email: string; name: string; picture?: stri
         email: user.email,
         picture: user.picture,
         googleId: user.googleId,
-        isEmailVerified: user.isEmailVerified
+        isEmailVerified: user.isEmailVerified,
+        role: user.role || 'user'
       },
       access_token: loginResult.access_token
     };

@@ -45,6 +45,9 @@ export class Video {
   @Column({ type: 'uuid' })
   userId: string;
 
+  @Column({ type: 'uuid', nullable: true })
+  channelId: string;
+
   @Column({ type: 'int', default: 0 })
   viewsCount: number;
 
@@ -69,9 +72,22 @@ export class Video {
   @Column({ type: 'boolean', default: false })
   isShort: boolean; // True if video is 60 seconds or less (YouTube Shorts criteria)
 
+  @Column({ type: 'boolean', default: false })
+  isFeatured: boolean; // Admin can feature videos
+
+  @Column({ type: 'boolean', default: false })
+  isSuspended: boolean; // Admin can suspend videos
+
+  @Column({ type: 'text', nullable: true })
+  suspensionReason: string; // Reason for suspension
+
   @ManyToOne(() => User, user => user.videos)
   @JoinColumn({ name: 'userId' })
   user: User;
+
+  @ManyToOne('Channel', 'videos', { nullable: true })
+  @JoinColumn({ name: 'channelId' })
+  channel: any;
 
   @OneToMany(() => Comment, comment => comment.video)
   comments: Comment[];

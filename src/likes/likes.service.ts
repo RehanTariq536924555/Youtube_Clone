@@ -5,6 +5,7 @@ import { Like, LikeType, LikeableType } from './entities/like.entity';
 import { CreateLikeDto } from './dto/create-like.dto';
 import { VideosService } from '../videos/videos.service';
 import { CommentsService } from '../comments/comments.service';
+import { PlaylistsService } from '../playlists/playlists.service';
 
 @Injectable()
 export class LikesService {
@@ -15,6 +16,8 @@ export class LikesService {
     private videosService: VideosService,
     @Inject(forwardRef(() => CommentsService))
     private commentsService: CommentsService,
+    @Inject(forwardRef(() => PlaylistsService))
+    private playlistsService: PlaylistsService,
   ) {}
 
   async toggleLike(createLikeDto: CreateLikeDto, userId: string): Promise<{ action: string; like?: Like }> {
@@ -30,6 +33,12 @@ export class LikesService {
         // Same action - remove the like/dislike
         await this.updateTargetCounts(targetId, targetType, existingLike.type, 'decrement');
         await this.likesRepository.remove(existingLike);
+        
+        // Remove from Liked Videos playlist if it's a video like
+        if (targetType === LikeableType.VIDEO && type === LikeType.LIKE) {
+          await this.playlistsService.removeFromLikedVideos(userId, targetId);
+        }
+        
         return { action: 'removed' };
       } else {
         // Different action - update the existing like
@@ -37,6 +46,18 @@ export class LikesService {
         existingLike.type = type;
         await this.updateTargetCounts(targetId, targetType, type, 'increment');
         const updatedLike = await this.likesRepository.save(existingLike);
+        
+        // Handle playlist changes for videos
+        if (targetType === LikeableType.VIDEO) {
+          if (type === LikeType.LIKE) {
+            // Changed from dislike to like - add to playlist
+            await this.playlistsService.addToLikedVideos(userId, targetId);
+          } else {
+            // Changed from like to dislike - remove from playlist
+            await this.playlistsService.removeFromLikedVideos(userId, targetId);
+          }
+        }
+        
         return { action: 'updated', like: updatedLike };
       }
     } else {
@@ -49,6 +70,12 @@ export class LikesService {
       });
       await this.updateTargetCounts(targetId, targetType, type, 'increment');
       const savedLike = await this.likesRepository.save(like);
+      
+      // Add to Liked Videos playlist if it's a video like
+      if (targetType === LikeableType.VIDEO && type === LikeType.LIKE) {
+        await this.playlistsService.addToLikedVideos(userId, targetId);
+      }
+      
       return { action: 'created', like: savedLike };
     }
   }

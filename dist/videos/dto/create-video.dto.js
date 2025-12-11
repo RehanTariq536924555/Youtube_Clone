@@ -65,4 +65,9 @@ __decorate([
     (0, class_transformer_1.Transform)(({ value }) => value === 'true' || value === true),
     __metadata("design:type", Boolean)
 ], CreateVideoDto.prototype, "isShort", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateVideoDto.prototype, "channelId", void 0);
 //# sourceMappingURL=create-video.dto.js.map

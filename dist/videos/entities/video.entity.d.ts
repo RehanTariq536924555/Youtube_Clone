@@ -17,6 +17,7 @@ export declare class Video {
     thumbnail: string;
     visibility: VideoVisibility;
     userId: string;
+    channelId: string;
     viewsCount: number;
     likesCount: number;
     dislikesCount: number;
@@ -25,7 +26,11 @@ export declare class Video {
     category: string;
     duration: number;
     isShort: boolean;
+    isFeatured: boolean;
+    isSuspended: boolean;
+    suspensionReason: string;
     user: User;
+    channel: any;
     comments: Comment[];
     views: View[];
     createdAt: Date;

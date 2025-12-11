@@ -2,9 +2,11 @@ import { Repository } from 'typeorm';
 import { Video } from './entities/video.entity';
 import { CreateVideoDto } from './dto/create-video.dto';
 import { UpdateVideoDto } from './dto/update-video.dto';
+import { Channel } from '../channels/entities/channel.entity';
 export declare class VideosService {
     private videosRepository;
-    constructor(videosRepository: Repository<Video>);
+    private channelRepository;
+    constructor(videosRepository: Repository<Video>, channelRepository: Repository<Channel>);
     create(createVideoDto: CreateVideoDto, file: Express.Multer.File, userId: string, thumbnailFile?: Express.Multer.File): Promise<Video>;
     findAll(userId?: string): Promise<Video[]>;
     findOne(id: string, userId?: string): Promise<Video>;

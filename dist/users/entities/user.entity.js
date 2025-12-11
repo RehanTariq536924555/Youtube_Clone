@@ -72,6 +72,14 @@ __decorate([
     __metadata("design:type", Number)
 ], User.prototype, "videosCount", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ default: 'user' }),
+    __metadata("design:type", String)
+], User.prototype, "role", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: false }),
+    __metadata("design:type", Boolean)
+], User.prototype, "isBanned", void 0);
+__decorate([
     (0, typeorm_1.OneToMany)('Video', 'user'),
     __metadata("design:type", Array)
 ], User.prototype, "videos", void 0);

@@ -43,4 +43,8 @@ export class CreateVideoDto {
   @IsOptional()
   @Transform(({ value }) => value === 'true' || value === true)
   isShort?: boolean;
+
+  @IsString()
+  @IsOptional()
+  channelId?: string;
 }

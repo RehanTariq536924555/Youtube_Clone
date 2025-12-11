@@ -31,6 +31,7 @@ export declare class AuthController {
             picture: string;
             googleId: string;
             isEmailVerified: boolean;
+            role: string;
             createdAt: Date;
         };
     } | {
@@ -75,10 +76,6 @@ export declare class AuthController {
         message?: undefined;
     }>;
     getCurrentUser(req: any): Promise<{
-        error: string;
-        user?: undefined;
-        details?: undefined;
-    } | {
         user: {
             id: string;
             name: string;
@@ -86,14 +83,15 @@ export declare class AuthController {
             picture: string;
             googleId: string;
             isEmailVerified: boolean;
+            role: string;
             createdAt: Date;
         };
-        error?: undefined;
+    } | {
+        error: string;
         details?: undefined;
     } | {
         error: string;
         details: any;
-        user?: undefined;
     }>;
     googleAuth(req: any): Promise<void>;
     googleAuthCallback(req: any, res: Response): Promise<void>;
@@ -108,6 +106,7 @@ export declare class AuthController {
             picture: string;
             googleId: string;
             isEmailVerified: boolean;
+            role: string;
         };
         access_token: string;
         error?: undefined;
@@ -132,6 +131,7 @@ export declare class AuthController {
             picture: string;
             googleId: string;
             isEmailVerified: boolean;
+            role: string;
         };
         access_token: string;
         error?: undefined;

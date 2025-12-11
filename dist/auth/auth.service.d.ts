@@ -17,6 +17,7 @@ export declare class AuthService {
             picture: string;
             googleId: string;
             isEmailVerified: boolean;
+            role: string;
             createdAt: Date;
         };
     }>;

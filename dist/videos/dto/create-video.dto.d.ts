@@ -8,4 +8,5 @@ export declare class CreateVideoDto {
     category?: string;
     duration?: number;
     isShort?: boolean;
+    channelId?: string;
 }
