@@ -22,13 +22,19 @@ async function bootstrap() {
       origin: [
         frontendUrl, 
         'http://localhost:3000', 
+        'http://localhost:5173',
         'http://127.0.0.1:3000',
+        'http://127.0.0.1:5173',
         'https://youtube-clone-frontend-livid.vercel.app',
-        'https://youtube-clone-1-ntn4.onrender.com'
+        'https://youtube-clone-1-ntn4.onrender.com',
+        // Add more permissive patterns for development
+        /^https:\/\/.*\.vercel\.app$/,
+        /^http:\/\/localhost:\d+$/,
+        /^http:\/\/127\.0\.0\.1:\d+$/
       ],
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
       credentials: true,
-      allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With'],
       optionsSuccessStatus: 200
     });
 
