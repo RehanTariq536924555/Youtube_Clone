@@ -26,6 +26,7 @@ import { PlaylistsModule } from './playlists/playlists.module';
 @Module({
   controllers: [AppController],
   imports: [
+    TypeOrmModule.forFeature([User]),
     ConfigModule.forRoot({
       isGlobal: true,
       load: [configuration],

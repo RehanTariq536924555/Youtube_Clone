@@ -15,6 +15,7 @@ const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
 const auth_module_1 = require("./auth/auth.module");
 const users_module_1 = require("./users/users.module");
+const user_entity_1 = require("./users/entities/user.entity");
 const email_service_1 = require("./email/email.service");
 const forgot_password_module_1 = require("./forgot-password/forgot-password.module");
 const reset_password_module_1 = require("./reset-password/reset-password.module");
@@ -36,6 +37,7 @@ exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         controllers: [app_controller_1.AppController],
         imports: [
+            typeorm_1.TypeOrmModule.forFeature([user_entity_1.User]),
             config_1.ConfigModule.forRoot({
                 isGlobal: true,
                 load: [configuration_1.default],

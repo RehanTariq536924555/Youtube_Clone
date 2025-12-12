@@ -1,9 +1,12 @@
 import { Response } from 'express';
 import { AppService } from './app.service';
+import { Repository } from 'typeorm';
+import { User } from './users/entities/user.entity';
 export declare class AppController {
     private readonly appService;
+    private userRepository;
     private readonly logger;
-    constructor(appService: AppService);
+    constructor(appService: AppService, userRepository: Repository<User>);
     getHealth(): {
         status: string;
         message: string;
@@ -27,6 +30,27 @@ export declare class AppController {
         timestamp: string;
         version: string;
     };
+    promoteToAdmin(email: string): Promise<{
+        error: string;
+        statusCode: number;
+        message?: undefined;
+        user?: undefined;
+    } | {
+        message: string;
+        user: {
+            id: string;
+            name: string;
+            email: string;
+            role: string;
+        };
+        error?: undefined;
+        statusCode?: undefined;
+    } | {
+        error: string;
+        message: any;
+        statusCode: number;
+        user?: undefined;
+    }>;
     getFavicon(res: Response): void;
     headFavicon(res: Response): void;
 }

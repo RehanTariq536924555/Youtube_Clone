@@ -16,9 +16,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppController = void 0;
 const common_1 = require("@nestjs/common");
 const app_service_1 = require("./app.service");
+const typeorm_1 = require("@nestjs/typeorm");
+const typeorm_2 = require("typeorm");
+const user_entity_1 = require("./users/entities/user.entity");
 let AppController = AppController_1 = class AppController {
-    constructor(appService) {
+    constructor(appService, userRepository) {
         this.appService = appService;
+        this.userRepository = userRepository;
         this.logger = new common_1.Logger(AppController_1.name);
     }
     getHealth() {
@@ -40,6 +44,49 @@ let AppController = AppController_1 = class AppController {
     getApiHealth() {
         this.logger.log('API health check endpoint accessed');
         return this.appService.getApiHealth();
+    }
+    async promoteToAdmin(email) {
+        this.logger.log('Bootstrap promote to admin endpoint accessed');
+        try {
+            const existingAdmin = await this.userRepository.findOne({
+                where: { role: 'admin' },
+            });
+            if (existingAdmin) {
+                return {
+                    error: 'Admin user already exists. Cannot promote another user.',
+                    statusCode: 400
+                };
+            }
+            const user = await this.userRepository.findOne({
+                where: { email },
+            });
+            if (!user) {
+                return {
+                    error: 'User not found',
+                    statusCode: 404
+                };
+            }
+            user.role = 'admin';
+            user.isEmailVerified = true;
+            await this.userRepository.save(user);
+            return {
+                message: 'User promoted to admin successfully',
+                user: {
+                    id: user.id,
+                    name: user.name,
+                    email: user.email,
+                    role: user.role,
+                },
+            };
+        }
+        catch (error) {
+            this.logger.error('Error promoting user to admin:', error);
+            return {
+                error: 'Failed to promote user to admin',
+                message: error.message,
+                statusCode: 500
+            };
+        }
     }
     getFavicon(res) {
         res.status(204).end();
@@ -82,6 +129,13 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AppController.prototype, "getApiHealth", null);
 __decorate([
+    (0, common_1.Post)('bootstrap/promote-to-admin'),
+    __param(0, (0, common_1.Body)('email')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], AppController.prototype, "promoteToAdmin", null);
+__decorate([
     (0, common_1.Get)('favicon.ico'),
     __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
@@ -97,6 +151,8 @@ __decorate([
 ], AppController.prototype, "headFavicon", null);
 exports.AppController = AppController = AppController_1 = __decorate([
     (0, common_1.Controller)(''),
-    __metadata("design:paramtypes", [app_service_1.AppService])
+    __param(1, (0, typeorm_1.InjectRepository)(user_entity_1.User)),
+    __metadata("design:paramtypes", [app_service_1.AppService,
+        typeorm_2.Repository])
 ], AppController);
 //# sourceMappingURL=app.controller.js.map
