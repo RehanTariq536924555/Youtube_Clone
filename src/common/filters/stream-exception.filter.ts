@@ -30,7 +30,10 @@ export class StreamExceptionFilter implements ExceptionFilter {
 
     // Handle other stream-related errors
     if (exception.code && exception.code.startsWith('ERR_STREAM_')) {
-      this.logger.warn(`Stream error for ${request.url}: ${exception.message}`);
+      // Don't log premature close errors as they're normal when clients disconnect
+      if (exception.code !== 'ERR_STREAM_PREMATURE_CLOSE') {
+        this.logger.warn(`Stream error for ${request.url}: ${exception.message}`);
+      }
       
       // Try to send error response if connection is still open
       if (!response.headersSent) {
@@ -61,8 +64,13 @@ export class StreamExceptionFilter implements ExceptionFilter {
       return;
     }
 
-    // Log other exceptions normally
-    this.logger.error(`Exception: ${message}`, exception.stack);
+    // Handle video-related business logic errors with lower log level
+    if (message.includes('Video file not found') || message.includes('video not found')) {
+      this.logger.warn(`Video not found: ${request.url}`);
+    } else {
+      // Log other exceptions normally
+      this.logger.error(`Exception: ${message}`, exception.stack);
+    }
 
     if (!response.headersSent) {
       response.status(status).json({

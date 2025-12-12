@@ -30,7 +30,9 @@ let StreamExceptionFilter = StreamExceptionFilter_1 = class StreamExceptionFilte
             return;
         }
         if (exception.code && exception.code.startsWith('ERR_STREAM_')) {
-            this.logger.warn(`Stream error for ${request.url}: ${exception.message}`);
+            if (exception.code !== 'ERR_STREAM_PREMATURE_CLOSE') {
+                this.logger.warn(`Stream error for ${request.url}: ${exception.message}`);
+            }
             if (!response.headersSent) {
                 response.status(500).json({
                     statusCode: 500,
@@ -54,7 +56,12 @@ let StreamExceptionFilter = StreamExceptionFilter_1 = class StreamExceptionFilte
             }
             return;
         }
-        this.logger.error(`Exception: ${message}`, exception.stack);
+        if (message.includes('Video file not found') || message.includes('video not found')) {
+            this.logger.warn(`Video not found: ${request.url}`);
+        }
+        else {
+            this.logger.error(`Exception: ${message}`, exception.stack);
+        }
         if (!response.headersSent) {
             response.status(status).json({
                 statusCode: status,
