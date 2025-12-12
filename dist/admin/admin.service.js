@@ -298,6 +298,32 @@ let AdminService = class AdminService {
             },
         };
     }
+    async promoteUserToAdmin(email) {
+        const existingAdmin = await this.userRepository.findOne({
+            where: { role: 'admin' },
+        });
+        if (existingAdmin) {
+            throw new Error('Admin user already exists. Cannot promote another user.');
+        }
+        const user = await this.userRepository.findOne({
+            where: { email },
+        });
+        if (!user) {
+            throw new Error('User not found');
+        }
+        user.role = 'admin';
+        user.isEmailVerified = true;
+        await this.userRepository.save(user);
+        return {
+            message: 'User promoted to admin successfully',
+            user: {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+            },
+        };
+    }
 };
 exports.AdminService = AdminService;
 exports.AdminService = AdminService = __decorate([

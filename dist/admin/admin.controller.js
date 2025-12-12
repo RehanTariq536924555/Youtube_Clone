@@ -215,6 +215,9 @@ let AdminBootstrapController = class AdminBootstrapController {
     async createFirstAdmin(name, email, password) {
         return this.adminService.createFirstAdmin(name, email, password);
     }
+    async promoteToAdmin(email) {
+        return this.adminService.promoteUserToAdmin(email);
+    }
 };
 exports.AdminBootstrapController = AdminBootstrapController;
 __decorate([
@@ -226,6 +229,13 @@ __decorate([
     __metadata("design:paramtypes", [String, String, String]),
     __metadata("design:returntype", Promise)
 ], AdminBootstrapController.prototype, "createFirstAdmin", null);
+__decorate([
+    (0, common_1.Post)('promote-to-admin'),
+    __param(0, (0, common_1.Body)('email')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], AdminBootstrapController.prototype, "promoteToAdmin", null);
 exports.AdminBootstrapController = AdminBootstrapController = __decorate([
     (0, common_1.Controller)('admin/bootstrap'),
     __metadata("design:paramtypes", [admin_service_1.AdminService])

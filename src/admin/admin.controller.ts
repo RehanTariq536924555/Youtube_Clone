@@ -142,4 +142,11 @@ export class AdminBootstrapController {
   ) {
     return this.adminService.createFirstAdmin(name, email, password);
   }
+
+  @Post('promote-to-admin')
+  async promoteToAdmin(
+    @Body('email') email: string,
+  ) {
+    return this.adminService.promoteUserToAdmin(email);
+  }
 }

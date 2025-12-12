@@ -128,4 +128,13 @@ export declare class AdminService {
             role: string;
         };
     }>;
+    promoteUserToAdmin(email: string): Promise<{
+        message: string;
+        user: {
+            id: string;
+            name: string;
+            email: string;
+            role: string;
+        };
+    }>;
 }

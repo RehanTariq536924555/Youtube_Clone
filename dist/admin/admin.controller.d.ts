@@ -123,4 +123,13 @@ export declare class AdminBootstrapController {
             role: string;
         };
     }>;
+    promoteToAdmin(email: string): Promise<{
+        message: string;
+        user: {
+            id: string;
+            name: string;
+            email: string;
+            role: string;
+        };
+    }>;
 }
