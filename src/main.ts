@@ -7,6 +7,8 @@ import { StreamExceptionFilter } from './common/filters/stream-exception.filter'
 async function bootstrap() {
   try {
     console.log('Starting NestJS application...');
+    console.log('Environment:', process.env.NODE_ENV);
+    console.log('Port:', process.env.PORT);
 
     const app = await NestFactory.create(AppModule);
     console.log('Application created successfully');
@@ -17,10 +19,17 @@ async function bootstrap() {
 
     console.log('Configuring CORS...');
     app.enableCors({
-      origin: [frontendUrl, 'http://localhost:3000', 'http://127.0.0.1:3000'],
+      origin: [
+        frontendUrl, 
+        'http://localhost:3000', 
+        'http://127.0.0.1:3000',
+        'https://youtube-clone-frontend-livid.vercel.app',
+        'https://youtube-clone-1-ntn4.onrender.com'
+      ],
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
       credentials: true,
       allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+      optionsSuccessStatus: 200
     });
 
     // Increase body size limit for large video uploads (2GB)
@@ -38,9 +47,19 @@ async function bootstrap() {
     console.log('Setting up global exception filters...');
     app.useGlobalFilters(new StreamExceptionFilter());
 
+    // Add middleware to handle common deployment issues
+    app.use((req, res, next) => {
+      // Handle health check requests from Render
+      if (req.url === '/' && (req.method === 'HEAD' || req.method === 'GET')) {
+        console.log(`Health check request: ${req.method} ${req.url}`);
+      }
+      next();
+    });
+
     console.log(`Starting server on port ${port}...`);
     await app.listen(port, '0.0.0.0');
     console.log(`🚀 Application is running on: http://localhost:${port}`);
+    console.log(`🌐 Health check available at: http://localhost:${port}/health`);
   } catch (error) {
     console.error('❌ Error starting application:', error);
     process.exit(1);

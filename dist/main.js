@@ -8,6 +8,8 @@ const stream_exception_filter_1 = require("./common/filters/stream-exception.fil
 async function bootstrap() {
     try {
         console.log('Starting NestJS application...');
+        console.log('Environment:', process.env.NODE_ENV);
+        console.log('Port:', process.env.PORT);
         const app = await core_1.NestFactory.create(app_module_1.AppModule);
         console.log('Application created successfully');
         const configService = app.get(config_1.ConfigService);
@@ -15,10 +17,17 @@ async function bootstrap() {
         const frontendUrl = configService.get('FRONTEND_URL') || 'http://localhost:3000';
         console.log('Configuring CORS...');
         app.enableCors({
-            origin: [frontendUrl, 'http://localhost:3000', 'http://127.0.0.1:3000'],
+            origin: [
+                frontendUrl,
+                'http://localhost:3000',
+                'http://127.0.0.1:3000',
+                'https://youtube-clone-frontend-livid.vercel.app',
+                'https://youtube-clone-1-ntn4.onrender.com'
+            ],
             methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
             credentials: true,
             allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+            optionsSuccessStatus: 200
         });
         console.log('Configuring body parser for large files...');
         app.use(require('express').json({ limit: '2gb' }));
@@ -31,9 +40,16 @@ async function bootstrap() {
         }));
         console.log('Setting up global exception filters...');
         app.useGlobalFilters(new stream_exception_filter_1.StreamExceptionFilter());
+        app.use((req, res, next) => {
+            if (req.url === '/' && (req.method === 'HEAD' || req.method === 'GET')) {
+                console.log(`Health check request: ${req.method} ${req.url}`);
+            }
+            next();
+        });
         console.log(`Starting server on port ${port}...`);
         await app.listen(port, '0.0.0.0');
         console.log(`🚀 Application is running on: http://localhost:${port}`);
+        console.log(`🌐 Health check available at: http://localhost:${port}/health`);
     }
     catch (error) {
         console.error('❌ Error starting application:', error);

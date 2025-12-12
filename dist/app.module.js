@@ -11,6 +11,7 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const config_1 = require("@nestjs/config");
 const configuration_1 = require("./config/configuration");
+const app_controller_1 = require("./app.controller");
 const auth_module_1 = require("./auth/auth.module");
 const users_module_1 = require("./users/users.module");
 const email_service_1 = require("./email/email.service");
@@ -32,6 +33,7 @@ let AppModule = class AppModule {
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
+        controllers: [app_controller_1.AppController],
         imports: [
             config_1.ConfigModule.forRoot({
                 isGlobal: true,
@@ -43,6 +45,26 @@ exports.AppModule = AppModule = __decorate([
                 inject: [config_1.ConfigService],
                 useFactory: async (configService) => {
                     console.log('🔧 Database Configuration:');
+                    console.log('- NODE_ENV:', process.env.NODE_ENV);
+                    console.log('- DATABASE_URL exists:', !!process.env.DATABASE_URL);
+                    console.log('- DATABASE_URL preview:', process.env.DATABASE_URL ? process.env.DATABASE_URL.substring(0, 30) + '...' : 'NOT SET');
+                    const databaseUrl = process.env.DATABASE_URL;
+                    if (databaseUrl) {
+                        console.log('- Using DATABASE_URL connection');
+                        return {
+                            type: 'postgres',
+                            url: databaseUrl,
+                            entities: [__dirname + '/**/*.entity{.ts,.js}'],
+                            autoLoadEntities: true,
+                            synchronize: true,
+                            logging: false,
+                            retryAttempts: 3,
+                            retryDelay: 3000,
+                            dropSchema: false,
+                            migrationsRun: false,
+                            ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+                        };
+                    }
                     console.log('- Host:', configService.get('database.host'));
                     console.log('- Port:', configService.get('database.port'));
                     console.log('- Database:', configService.get('database.database'));
@@ -62,6 +84,7 @@ exports.AppModule = AppModule = __decorate([
                         retryDelay: 3000,
                         dropSchema: false,
                         migrationsRun: false,
+                        ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
                     };
                 },
             }),
