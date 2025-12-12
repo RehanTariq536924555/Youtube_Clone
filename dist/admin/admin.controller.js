@@ -12,7 +12,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AdminController = void 0;
+exports.AdminBootstrapController = exports.AdminController = void 0;
 const common_1 = require("@nestjs/common");
 const admin_service_1 = require("./admin.service");
 const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
@@ -208,4 +208,26 @@ exports.AdminController = AdminController = __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, admin_guard_1.AdminGuard),
     __metadata("design:paramtypes", [admin_service_1.AdminService])
 ], AdminController);
+let AdminBootstrapController = class AdminBootstrapController {
+    constructor(adminService) {
+        this.adminService = adminService;
+    }
+    async createFirstAdmin(name, email, password) {
+        return this.adminService.createFirstAdmin(name, email, password);
+    }
+};
+exports.AdminBootstrapController = AdminBootstrapController;
+__decorate([
+    (0, common_1.Post)('create-first-admin'),
+    __param(0, (0, common_1.Body)('name')),
+    __param(1, (0, common_1.Body)('email')),
+    __param(2, (0, common_1.Body)('password')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, String]),
+    __metadata("design:returntype", Promise)
+], AdminBootstrapController.prototype, "createFirstAdmin", null);
+exports.AdminBootstrapController = AdminBootstrapController = __decorate([
+    (0, common_1.Controller)('admin/bootstrap'),
+    __metadata("design:paramtypes", [admin_service_1.AdminService])
+], AdminBootstrapController);
 //# sourceMappingURL=admin.controller.js.map

@@ -119,4 +119,13 @@ export declare class AdminService {
             email: string;
         };
     }>;
+    createFirstAdmin(name: string, email: string, password: string): Promise<{
+        message: string;
+        user: {
+            id: string;
+            name: string;
+            email: string;
+            role: string;
+        };
+    }>;
 }

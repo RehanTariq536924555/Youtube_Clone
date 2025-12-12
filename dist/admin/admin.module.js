@@ -28,7 +28,7 @@ exports.AdminModule = AdminModule = __decorate([
             typeorm_1.TypeOrmModule.forFeature([user_entity_1.User, video_entity_1.Video, comment_entity_1.Comment, view_entity_1.View, channel_entity_1.Channel]),
             channels_module_1.ChannelsModule,
         ],
-        controllers: [admin_controller_1.AdminController, admin_channels_controller_1.AdminChannelsController],
+        controllers: [admin_controller_1.AdminController, admin_controller_1.AdminBootstrapController, admin_channels_controller_1.AdminChannelsController],
         providers: [admin_service_1.AdminService, admin_guard_1.AdminGuard],
         exports: [admin_service_1.AdminService, admin_guard_1.AdminGuard],
     })

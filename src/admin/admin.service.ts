@@ -303,4 +303,61 @@ export class AdminService {
       },
     };
   }
+
+  async createFirstAdmin(name: string, email: string, password: string) {
+    // Check if any admin user already exists
+    const existingAdmin = await this.userRepository.findOne({
+      where: { role: 'admin' },
+    });
+
+    if (existingAdmin) {
+      throw new Error('Admin user already exists. Use the regular admin creation endpoint.');
+    }
+
+    // Check if user with this email already exists
+    const existingUser = await this.userRepository.findOne({
+      where: { email },
+    });
+
+    if (existingUser) {
+      // If user exists but is not admin, update their role
+      existingUser.role = 'admin';
+      existingUser.isEmailVerified = true;
+      if (password) {
+        existingUser.password = await bcrypt.hash(password, 10);
+      }
+      await this.userRepository.save(existingUser);
+
+      return {
+        message: 'Existing user promoted to admin successfully',
+        user: {
+          id: existingUser.id,
+          name: existingUser.name,
+          email: existingUser.email,
+          role: existingUser.role,
+        },
+      };
+    }
+
+    // Create new admin user
+    const admin = this.userRepository.create({
+      name,
+      email,
+      password, // Will be hashed by @BeforeInsert hook
+      role: 'admin',
+      isEmailVerified: true,
+    });
+
+    await this.userRepository.save(admin);
+
+    return {
+      message: 'First admin created successfully',
+      user: {
+        id: admin.id,
+        name: admin.name,
+        email: admin.email,
+        role: admin.role,
+      },
+    };
+  }
 }

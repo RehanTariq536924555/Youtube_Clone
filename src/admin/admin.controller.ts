@@ -128,3 +128,18 @@ export class AdminController {
     return this.adminService.changeUserPassword(id, newPassword);
   }
 }
+
+// Bootstrap endpoint - no authentication required, only works if no admin exists
+@Controller('admin/bootstrap')
+export class AdminBootstrapController {
+  constructor(private readonly adminService: AdminService) {}
+
+  @Post('create-first-admin')
+  async createFirstAdmin(
+    @Body('name') name: string,
+    @Body('email') email: string,
+    @Body('password') password: string,
+  ) {
+    return this.adminService.createFirstAdmin(name, email, password);
+  }
+}

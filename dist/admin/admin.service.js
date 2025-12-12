@@ -253,6 +253,51 @@ let AdminService = class AdminService {
             },
         };
     }
+    async createFirstAdmin(name, email, password) {
+        const existingAdmin = await this.userRepository.findOne({
+            where: { role: 'admin' },
+        });
+        if (existingAdmin) {
+            throw new Error('Admin user already exists. Use the regular admin creation endpoint.');
+        }
+        const existingUser = await this.userRepository.findOne({
+            where: { email },
+        });
+        if (existingUser) {
+            existingUser.role = 'admin';
+            existingUser.isEmailVerified = true;
+            if (password) {
+                existingUser.password = await bcrypt.hash(password, 10);
+            }
+            await this.userRepository.save(existingUser);
+            return {
+                message: 'Existing user promoted to admin successfully',
+                user: {
+                    id: existingUser.id,
+                    name: existingUser.name,
+                    email: existingUser.email,
+                    role: existingUser.role,
+                },
+            };
+        }
+        const admin = this.userRepository.create({
+            name,
+            email,
+            password,
+            role: 'admin',
+            isEmailVerified: true,
+        });
+        await this.userRepository.save(admin);
+        return {
+            message: 'First admin created successfully',
+            user: {
+                id: admin.id,
+                name: admin.name,
+                email: admin.email,
+                role: admin.role,
+            },
+        };
+    }
 };
 exports.AdminService = AdminService;
 exports.AdminService = AdminService = __decorate([

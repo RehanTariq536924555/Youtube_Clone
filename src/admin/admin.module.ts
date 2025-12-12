@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AdminController } from './admin.controller';
+import { AdminController, AdminBootstrapController } from './admin.controller';
 import { AdminChannelsController } from './admin-channels.controller';
 import { AdminService } from './admin.service';
 import { AdminGuard } from './guards/admin.guard';
@@ -16,7 +16,7 @@ import { ChannelsModule } from '../channels/channels.module';
     TypeOrmModule.forFeature([User, Video, Comment, View, Channel]),
     ChannelsModule,
   ],
-  controllers: [AdminController, AdminChannelsController],
+  controllers: [AdminController, AdminBootstrapController, AdminChannelsController],
   providers: [AdminService, AdminGuard],
   exports: [AdminService, AdminGuard],
 })

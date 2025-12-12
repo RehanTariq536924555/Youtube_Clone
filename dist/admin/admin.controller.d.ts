@@ -111,3 +111,16 @@ export declare class AdminController {
         };
     }>;
 }
+export declare class AdminBootstrapController {
+    private readonly adminService;
+    constructor(adminService: AdminService);
+    createFirstAdmin(name: string, email: string, password: string): Promise<{
+        message: string;
+        user: {
+            id: string;
+            name: string;
+            email: string;
+            role: string;
+        };
+    }>;
+}
