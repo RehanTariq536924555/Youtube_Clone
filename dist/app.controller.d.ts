@@ -51,6 +51,27 @@ export declare class AppController {
         statusCode: number;
         user?: undefined;
     }>;
+    setUserPassword(email: string, password: string): Promise<{
+        error: string;
+        statusCode: number;
+        message?: undefined;
+        user?: undefined;
+    } | {
+        message: string;
+        user: {
+            id: string;
+            name: string;
+            email: string;
+            hasPassword: boolean;
+        };
+        error?: undefined;
+        statusCode?: undefined;
+    } | {
+        error: string;
+        message: any;
+        statusCode: number;
+        user?: undefined;
+    }>;
     getFavicon(res: Response): void;
     headFavicon(res: Response): void;
 }

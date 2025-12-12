@@ -88,6 +88,42 @@ let AppController = AppController_1 = class AppController {
             };
         }
     }
+    async setUserPassword(email, password) {
+        this.logger.log('Bootstrap set password endpoint accessed');
+        try {
+            const user = await this.userRepository.findOne({
+                where: { email },
+            });
+            if (!user) {
+                return {
+                    error: 'User not found',
+                    statusCode: 404
+                };
+            }
+            const bcrypt = require('bcryptjs');
+            const hashedPassword = await bcrypt.hash(password, 10);
+            user.password = hashedPassword;
+            user.isEmailVerified = true;
+            await this.userRepository.save(user);
+            return {
+                message: 'Password set successfully',
+                user: {
+                    id: user.id,
+                    name: user.name,
+                    email: user.email,
+                    hasPassword: !!user.password,
+                },
+            };
+        }
+        catch (error) {
+            this.logger.error('Error setting user password:', error);
+            return {
+                error: 'Failed to set password',
+                message: error.message,
+                statusCode: 500
+            };
+        }
+    }
     getFavicon(res) {
         res.status(204).end();
     }
@@ -135,6 +171,14 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], AppController.prototype, "promoteToAdmin", null);
+__decorate([
+    (0, common_1.Post)('bootstrap/set-password'),
+    __param(0, (0, common_1.Body)('email')),
+    __param(1, (0, common_1.Body)('password')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", Promise)
+], AppController.prototype, "setUserPassword", null);
 __decorate([
     (0, common_1.Get)('favicon.ico'),
     __param(0, (0, common_1.Res)()),
