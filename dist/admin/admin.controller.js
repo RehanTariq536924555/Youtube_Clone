@@ -237,7 +237,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], AdminBootstrapController.prototype, "promoteToAdmin", null);
 exports.AdminBootstrapController = AdminBootstrapController = __decorate([
-    (0, common_1.Controller)('admin/bootstrap'),
+    (0, common_1.Controller)('bootstrap'),
     __metadata("design:paramtypes", [admin_service_1.AdminService])
 ], AdminBootstrapController);
 //# sourceMappingURL=admin.controller.js.map

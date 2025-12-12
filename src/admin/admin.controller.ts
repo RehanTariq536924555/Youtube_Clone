@@ -129,8 +129,8 @@ export class AdminController {
   }
 }
 
-// Bootstrap endpoint - no authentication required, only works if no admin exists
-@Controller('admin/bootstrap')
+// Bootstrap controller - no authentication required
+@Controller('bootstrap')
 export class AdminBootstrapController {
   constructor(private readonly adminService: AdminService) {}
 

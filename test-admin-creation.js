@@ -10,7 +10,7 @@ const data = JSON.stringify({
 const options = {
   hostname: 'youtube-clone-1-ntn4.onrender.com',
   port: 443,
-  path: '/admin/bootstrap/create-first-admin',
+  path: '/bootstrap/create-first-admin',
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
