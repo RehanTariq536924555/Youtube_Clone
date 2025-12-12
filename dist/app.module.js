@@ -12,6 +12,7 @@ const typeorm_1 = require("@nestjs/typeorm");
 const config_1 = require("@nestjs/config");
 const configuration_1 = require("./config/configuration");
 const app_controller_1 = require("./app.controller");
+const app_service_1 = require("./app.service");
 const auth_module_1 = require("./auth/auth.module");
 const users_module_1 = require("./users/users.module");
 const email_service_1 = require("./email/email.service");
@@ -104,7 +105,7 @@ exports.AppModule = AppModule = __decorate([
             channels_module_1.ChannelsModule,
             playlists_module_1.PlaylistsModule,
         ],
-        providers: [email_service_1.EmailService],
+        providers: [app_service_1.AppService, email_service_1.EmailService],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map

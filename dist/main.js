@@ -41,8 +41,10 @@ async function bootstrap() {
         console.log('Setting up global exception filters...');
         app.useGlobalFilters(new stream_exception_filter_1.StreamExceptionFilter());
         app.use((req, res, next) => {
-            if (req.url === '/' && (req.method === 'HEAD' || req.method === 'GET')) {
-                console.log(`Health check request: ${req.method} ${req.url}`);
+            console.log(`📥 ${req.method} ${req.url} - ${req.ip || 'unknown IP'}`);
+            if ((req.url === '/' || req.url === '/health' || req.url === '/api/health') &&
+                (req.method === 'HEAD' || req.method === 'GET')) {
+                console.log(`🏥 Health check request: ${req.method} ${req.url}`);
             }
             next();
         });

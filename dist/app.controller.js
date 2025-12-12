@@ -11,33 +11,35 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var AppController_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppController = void 0;
 const common_1 = require("@nestjs/common");
-let AppController = class AppController {
+const app_service_1 = require("./app.service");
+let AppController = AppController_1 = class AppController {
+    constructor(appService) {
+        this.appService = appService;
+        this.logger = new common_1.Logger(AppController_1.name);
+    }
     getHealth() {
-        return {
-            status: 'OK',
-            message: 'NebulaStream API is running',
-            timestamp: new Date().toISOString(),
-            version: '1.0.0',
-            environment: process.env.NODE_ENV || 'development'
-        };
+        this.logger.log('Root GET request received');
+        return this.appService.getHealth();
     }
     headHealth(res) {
+        this.logger.log('Root HEAD request received');
         res.status(200).end();
     }
     getHealthCheck() {
-        return {
-            status: 'healthy',
-            service: 'NebulaStream Backend',
-            database: 'connected',
-            timestamp: new Date().toISOString(),
-            uptime: process.uptime()
-        };
+        this.logger.log('Health check endpoint accessed');
+        return this.appService.getHealthCheck();
     }
     headHealthCheck(res) {
+        this.logger.log('Health check HEAD request received');
         res.status(200).end();
+    }
+    getApiHealth() {
+        this.logger.log('API health check endpoint accessed');
+        return this.appService.getApiHealth();
     }
     getFavicon(res) {
         res.status(204).end();
@@ -74,6 +76,12 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AppController.prototype, "headHealthCheck", null);
 __decorate([
+    (0, common_1.Get)('api/health'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], AppController.prototype, "getApiHealth", null);
+__decorate([
     (0, common_1.Get)('favicon.ico'),
     __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
@@ -87,7 +95,8 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], AppController.prototype, "headFavicon", null);
-exports.AppController = AppController = __decorate([
-    (0, common_1.Controller)()
+exports.AppController = AppController = AppController_1 = __decorate([
+    (0, common_1.Controller)(''),
+    __metadata("design:paramtypes", [app_service_1.AppService])
 ], AppController);
 //# sourceMappingURL=app.controller.js.map

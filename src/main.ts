@@ -47,11 +47,14 @@ async function bootstrap() {
     console.log('Setting up global exception filters...');
     app.useGlobalFilters(new StreamExceptionFilter());
 
-    // Add middleware to handle common deployment issues
+    // Add middleware to log all requests for debugging
     app.use((req, res, next) => {
+      console.log(`📥 ${req.method} ${req.url} - ${req.ip || 'unknown IP'}`);
+      
       // Handle health check requests from Render
-      if (req.url === '/' && (req.method === 'HEAD' || req.method === 'GET')) {
-        console.log(`Health check request: ${req.method} ${req.url}`);
+      if ((req.url === '/' || req.url === '/health' || req.url === '/api/health') && 
+          (req.method === 'HEAD' || req.method === 'GET')) {
+        console.log(`🏥 Health check request: ${req.method} ${req.url}`);
       }
       next();
     });

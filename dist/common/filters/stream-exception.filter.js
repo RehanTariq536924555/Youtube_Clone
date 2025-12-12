@@ -43,6 +43,17 @@ let StreamExceptionFilter = StreamExceptionFilter_1 = class StreamExceptionFilte
         }
         const status = exception.getStatus ? exception.getStatus() : 500;
         const message = exception.message || 'Internal server error';
+        if (status === 404 && (request.url === '/' || request.url === '/health' || request.url === '/favicon.ico')) {
+            if (!response.headersSent) {
+                response.status(status).json({
+                    statusCode: status,
+                    message: message,
+                    timestamp: new Date().toISOString(),
+                    path: request.url,
+                });
+            }
+            return;
+        }
         this.logger.error(`Exception: ${message}`, exception.stack);
         if (!response.headersSent) {
             response.status(status).json({

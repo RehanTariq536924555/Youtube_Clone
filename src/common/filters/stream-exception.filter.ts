@@ -44,10 +44,24 @@ export class StreamExceptionFilter implements ExceptionFilter {
       return;
     }
 
-    // Handle other exceptions normally
+    // Don't log 404 errors for health check paths to reduce noise
     const status = exception.getStatus ? exception.getStatus() : 500;
     const message = exception.message || 'Internal server error';
+    
+    if (status === 404 && (request.url === '/' || request.url === '/health' || request.url === '/favicon.ico')) {
+      // Silently handle 404s for common health check paths
+      if (!response.headersSent) {
+        response.status(status).json({
+          statusCode: status,
+          message: message,
+          timestamp: new Date().toISOString(),
+          path: request.url,
+        });
+      }
+      return;
+    }
 
+    // Log other exceptions normally
     this.logger.error(`Exception: ${message}`, exception.stack);
 
     if (!response.headersSent) {

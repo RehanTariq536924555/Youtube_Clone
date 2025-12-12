@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import configuration from './config/configuration';
 import { AppController } from './app.controller';
+import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { User } from './users/entities/user.entity';
@@ -99,6 +100,6 @@ import { PlaylistsModule } from './playlists/playlists.module';
     ChannelsModule,
     PlaylistsModule,
   ],
-  providers: [EmailService],
+  providers: [AppService, EmailService],
 })
 export class AppModule {}

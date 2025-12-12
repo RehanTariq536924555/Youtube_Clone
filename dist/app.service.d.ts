@@ -1,9 +1,4 @@
-import { Response } from 'express';
-import { AppService } from './app.service';
-export declare class AppController {
-    private readonly appService;
-    private readonly logger;
-    constructor(appService: AppService);
+export declare class AppService {
     getHealth(): {
         status: string;
         message: string;
@@ -11,7 +6,6 @@ export declare class AppController {
         version: string;
         environment: string;
     };
-    headHealth(res: Response): void;
     getHealthCheck(): {
         status: string;
         service: string;
@@ -20,13 +14,10 @@ export declare class AppController {
         uptime: number;
         routes: string;
     };
-    headHealthCheck(res: Response): void;
     getApiHealth(): {
         status: string;
         message: string;
         timestamp: string;
         version: string;
     };
-    getFavicon(res: Response): void;
-    headFavicon(res: Response): void;
 }
